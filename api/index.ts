@@ -41,25 +41,27 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 	
 	console.error(wizModelResponse);
 	
-	if (!wizModelResponse.data || !wizModelResponse.data.image) {
-      throw new Error('La respuesta de la API de WizModel no contiene una URL de imagen');
+	if (!wizModelResponse.data || !wizModelResponse.data.images || !wizModelResponse.data.images.length) {
+      throw new Error('La respuesta de la API de WizModel no contiene imágenes');
     }
 	
-    const generatedImageUrl = wizModelResponse.data.image;
-
+    // Extrae la imagen codificada en base64
+    const base64Image = wizModelResponse.data.images[0];
+    const imageBuffer = Buffer.from(base64Image, 'base64');
     
      // Reescalamos la imagen usando ImageCDN
-    const width = 2048;
+    /*
+	const width = 2048;
     const height = 2048;
     const imageCdnUrl = `https://api.imagecdn.app/v1/image/resize?url=${encodeURIComponent(generatedImageUrl)}&width=${width}&height=${height}`;
 
     // Realiza la solicitud GET para obtener la imagen reescalada
     const imageCdnResponse = await axios.get(imageCdnUrl, { responseType: 'arraybuffer' });
-
+*/
 
     // Configura el tipo de contenido y responde con la imagen
-    res.setHeader('Content-Type', 'image/jpeg');
-    res.send(resizedImageResponse.data);
+    res.setHeader('Content-Type', 'image/png');
+    res.send(imageBuffer);
   } catch (error) {
     console.error('Error al generar o reescalar la imagen:', error);
     res.status(500).json({ error: 'Error al generar o reescalar la imagen' });
