@@ -38,7 +38,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       height: 2048,
     };
 
-    const imageCdnResponse = await axios.post(imageCdnUrl, imageCdnPayload);
+    const imageCdnResponse = await axios.get(imageCdnUrl, imageCdnPayload);
     const resizedImageUrl = imageCdnResponse.data.url;
 
     // Solicita la imagen reescalada
