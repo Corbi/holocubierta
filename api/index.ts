@@ -49,14 +49,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const base64Image = wizModelResponse.data.images[0];
     const imageBuffer = Buffer.from(base64Image, 'base64');
     
-    // Aquí vamos a escribir el archivo en el sistema de archivos temporal y luego responder con la URL del archivo
-    const fs = require('fs');
-    const path = require('path');
-    const filePath = path.join('/tmp', 'generated_image.png');
-    fs.writeFileSync(filePath, imageBuffer);
-
-    // Responde con la ruta del archivo temporal
-    res.status(200).json({ imageUrl: filePath });
+    // Configura el encabezado de tipo de contenido como image/png
+    res.setHeader('Content-Type', 'image/png');
+    
+    // Envía el buffer de la imagen como respuesta
+    res.send(imageBuffer);
   } catch (error) {
     console.error('Error al generar o reescalar la imagen:', error.message || error);
     res.status(500).json({ error: 'Error al generar o reescalar la imagen' });
