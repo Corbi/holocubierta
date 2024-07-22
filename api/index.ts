@@ -27,8 +27,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     // Solicita la generación de la imagen
-    const wizModelResponse = await axios.post(wizModelUrl, wizModelPayload, { headers: wizModelHeaders });+
-	console.info(wizModelResponse);
+    const wizModelResponse = await axios.post(wizModelUrl, wizModelPayload, { headers: wizModelHeaders });
+	console.error(wizModelResponse);
     const generatedImageUrl = wizModelResponse.data.image;
 
     // Reescalamos la imagen usando ImageCDN
