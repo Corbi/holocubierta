@@ -49,21 +49,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const base64Image = wizModelResponse.data.images[0];
     const imageBuffer = Buffer.from(base64Image, 'base64');
     
-     // Reescalamos la imagen usando ImageCDN
-    /*
-	const width = 2048;
-    const height = 2048;
-    const imageCdnUrl = `https://api.imagecdn.app/v1/image/resize?url=${encodeURIComponent(generatedImageUrl)}&width=${width}&height=${height}`;
+    // Aquí vamos a escribir el archivo en el sistema de archivos temporal y luego responder con la URL del archivo
+    const fs = require('fs');
+    const path = require('path');
+    const filePath = path.join('/tmp', 'generated_image.png');
+    fs.writeFileSync(filePath, imageBuffer);
 
-    // Realiza la solicitud GET para obtener la imagen reescalada
-    const imageCdnResponse = await axios.get(imageCdnUrl, { responseType: 'arraybuffer' });
-*/
-
-    // Configura el tipo de contenido y responde con la imagen
-    res.setHeader('Content-Type', 'image/png');
-    res.send(imageBuffer);
+    // Responde con la ruta del archivo temporal
+    res.status(200).json({ imageUrl: filePath });
   } catch (error) {
-    console.error('Error al generar o reescalar la imagen:', error);
+    console.error('Error al generar o reescalar la imagen:', error.message || error);
     res.status(500).json({ error: 'Error al generar o reescalar la imagen' });
   }
 }
