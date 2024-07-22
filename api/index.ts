@@ -3,6 +3,9 @@ import axios from 'axios';
 
 // Define el manejador de la función para Vercel
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+	
+	console.error("Entra a la aplicación");
+
   const { texto } = req.query;
   const apiKeyWizModel = process.env.API_KEY;  // Reemplaza esto con tu clave de API de WizModel
 
@@ -26,8 +29,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   };
 
   try {
+  console.error("Entra al try");
     // Solicita la generación de la imagen
     const wizModelResponse = await axios.post(wizModelUrl, wizModelPayload, { headers: wizModelHeaders });
+	
+	console.error("Hace la primera llamada");
+	
 	console.error(wizModelResponse);
     const generatedImageUrl = wizModelResponse.data.image;
 
@@ -40,6 +47,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     };
 
     const imageCdnResponse = await axios.get(imageCdnUrl, imageCdnPayload);
+	
+	console.error("Hace la segunda llamada");
+	
     const resizedImageUrl = imageCdnResponse.data.url;
 
     // Solicita la imagen reescalada
