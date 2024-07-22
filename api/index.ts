@@ -30,25 +30,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   };
 
   try {
-  console.error("Entra al try");
-    // Solicita la generación de la imagen
-    const wizModelResponse = await axios.post(wizModelUrl, wizModelPayload, { 
-      headers: wizModelHeaders, 
-      timeout: 60000 // 60 segundos
-    });
-	
-	console.error("Hace la primera llamada");
-	
-	console.error(wizModelResponse);
-	
-	if (!wizModelResponse.data || !wizModelResponse.data.images || !wizModelResponse.data.images.length) {
+	const wizModelResponse = await axios.post(wizModelUrl, wizModelPayload, { headers: wizModelHeaders });
+
+    if (!wizModelResponse.data || !wizModelResponse.data.images || !wizModelResponse.data.images.length) {
       throw new Error('La respuesta de la API de WizModel no contiene imágenes');
     }
-	
-    // Extrae la imagen codificada en base64
+
     const base64Image = wizModelResponse.data.images[0];
-    const imageBuffer = Buffer.from(base64Image, 'base64');
-    
+
+    // Asegúrate de que la cadena base64 no contiene encabezados como "data:image/png;base64,"
+    const base64Data = base64Image.replace(/^data:image\/png;base64,/, '');
+
+    // Decodifica la imagen base64
+    const imageBuffer = Buffer.from(base64Data, 'base64');
+
     // Configura el encabezado de tipo de contenido como image/png
     res.setHeader('Content-Type', 'image/png');
     
