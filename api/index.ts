@@ -3,8 +3,12 @@ import axios from 'axios';
 
 // Función para extraer el MIME type del base64
 function extractMimeType(base64String: string): string {
-  const mimeTypeMatch = base64String.match(/^data:(image\/[a-zA-Z]+);base64,/);
+  const mimeTypeMatch = base64String.match(/^data:(.+);base64,/);
   return mimeTypeMatch ? mimeTypeMatch[1] : '';
+}
+
+function delay(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 // Define el manejador de la función para Vercel
@@ -37,6 +41,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   let imageBuffer: Buffer | null = null;
   let mimeType: string = '';
 
+	
   while (attempts < maxAttempts) {
     try {
       const wizModelResponse = await axios.post(wizModelUrl, wizModelPayload, {
@@ -65,7 +70,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       console.error(`Intento ${attempts + 1} fallido: ${error.message || error}`);
     }
 
+	await delay(5000);
     attempts++;
+
   }
 
   if (imageBuffer) {
