@@ -40,7 +40,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     const base64Image = wizModelResponse.data.images[0];
-	const mimeType = extractMimeType(base64Image);
 	
 	console.error(base64Image);
 
@@ -56,7 +55,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // Envía el buffer de la imagen como respuesta
     res.send(imageBuffer);
   } catch (error) {
-    console.error('Error al generar o reescalar la imagen:', error.message || error);
-    res.status(500).json({ error: 'Error al generar o reescalar la imagen' });
+    console.error('Error al generarla imagen:', error.message || error);
+    res.status(500).json({ error: 'Error al generarla imagen' });
   }
 }
