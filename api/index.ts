@@ -9,7 +9,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const { texto } = req.query;
   const apiKeyWizModel = process.env.API_KEY;  // Reemplaza esto con tu clave de API de WizModel
 
-	console.error("apiKeyWizModel");
     
   // Verifica si el parámetro texto está definido
   if (!texto || typeof texto !== 'string') {
@@ -25,9 +24,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   };
 
   const wizModelHeaders = {
-    'Content-Type': 'application/json',
-    'Authorization': Bearer ${apiKeyWizModel},
-  };
+  'Content-Type': 'application/json',
+  'Authorization': `Bearer ${apiKeyWizModel}`,
+};
 
   try {
 	const wizModelResponse = await axios.post(wizModelUrl, wizModelPayload, { 
