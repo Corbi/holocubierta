@@ -12,7 +12,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const { texto } = req.query;
   const apiKeyWizModel = process.env.API_KEY;  // Reemplaza esto con tu clave de API de WizModel
 
-  console.error(`${texto}`);
+  console.error(`Texto recibido: ${texto}`);
 
   // Verifica si el parámetro texto está definido
   if (!texto || typeof texto !== 'string') {
@@ -32,13 +32,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     'Authorization': `Bearer ${apiKeyWizModel}`,
   };
 
-  let attempts = 0;
   const maxAttempts = 5;
-  let success = false;
+  let attempts = 0;
   let imageBuffer: Buffer | null = null;
   let mimeType: string = '';
 
-  while (attempts < maxAttempts && !success) {
+  while (attempts < maxAttempts) {
     try {
       const wizModelResponse = await axios.post(wizModelUrl, wizModelPayload, {
         headers: wizModelHeaders,
@@ -58,7 +57,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         // Decodifica la imagen base64
         imageBuffer = Buffer.from(base64Data, 'base64');
-        success = true;
+        break; // Salir del bucle si la imagen es JPEG
       } else {
         console.error(`Intento ${attempts + 1}: Mimetype no es JPEG, es ${mimeType}. Reintentando...`);
       }
@@ -69,7 +68,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     attempts++;
   }
 
-  if (success && imageBuffer) {
+  if (imageBuffer) {
     // Configura el encabezado de tipo de contenido como image/jpeg
     res.setHeader('Content-Type', 'image/jpeg');
     // Envía el buffer de la imagen como respuesta
