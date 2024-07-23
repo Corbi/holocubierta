@@ -16,7 +16,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   const wizModelUrl = 'https://api.wizmodel.com/sdapi/v1/txt2img';
-  const prompt = `${texto}, skybox`;
+  const prompt = `${texto}, skybox, 360`;
 
   const wizModelPayload = {
     prompt: prompt,
@@ -31,7 +31,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
 	const wizModelResponse = await axios.post(wizModelUrl, wizModelPayload, { 
       headers: wizModelHeaders,
-      timeout: 10000 // Establecer un tiempo de espera de 10 segundos
+      timeout: 30000 // Establecer un tiempo de espera de 10 segundos
     });
 
     if (!wizModelResponse.data || !wizModelResponse.data.images || !wizModelResponse.data.images.length) {
@@ -39,6 +39,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     const base64Image = wizModelResponse.data.images[0];
+	
+	console.error(base64Image);
 
     // Asegúrate de que la cadena base64 no contiene encabezados como "data:image/png;base64,"
     const base64Data = base64Image.replace(/^data:image\/png;base64,/, '');
