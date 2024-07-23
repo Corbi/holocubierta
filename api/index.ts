@@ -21,16 +21,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const wizModelPayload = {
     prompt: prompt,
-    steps: 100,
+    steps: 30,
   };
 
   const wizModelHeaders = {
     'Content-Type': 'application/json',
-    'Authorization': `Bearer ${apiKeyWizModel}`,
+    'Authorization': Bearer ${apiKeyWizModel},
   };
 
   try {
-	const wizModelResponse = await axios.post(wizModelUrl, wizModelPayload, { headers: wizModelHeaders });
+	const wizModelResponse = await axios.post(wizModelUrl, wizModelPayload, { 
+      headers: wizModelHeaders,
+      timeout: 10000 // Establecer un tiempo de espera de 10 segundos
+    });
 
     if (!wizModelResponse.data || !wizModelResponse.data.images || !wizModelResponse.data.images.length) {
       throw new Error('La respuesta de la API de WizModel no contiene imágenes');
